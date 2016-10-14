@@ -41,6 +41,12 @@ class PunkApi
         return new self($apiKey);
     }
 
+    public function getEndpoint()
+    {
+        return $this->apiRoot . http_build_query($this->params);
+
+    }
+
     public function clearParams()
     {
         $this->params = [];
@@ -64,9 +70,7 @@ class PunkApi
 
     public function getBeers()
     {
-        $endpoint = $this->apiRoot . http_build_query($this->params);
-        dd($endpoint);
-        $response = $this->client->get($endpoint,
+        $response = $this->client->get($this->getEndpoint(),
             [
                 'auth' => [$this->apiKey,$this->apiKey],
             ]
