@@ -1,0 +1,14 @@
+{
+    "name": "billythekid/punk-api",
+    "description": "PHP Wrapper for the Punk API https://punkapi.com",
+    "require": {
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "billythekid",
+        }
+    ],
+    "minimum-stability": "dev"
+}
