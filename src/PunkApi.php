@@ -63,7 +63,8 @@ class PunkApi
 
     public function removeParam($badParam)
     {
-        $this->params = array_filter(array_keys($this->params),function($paramName) use ($badParam){
+        $this->params = array_filter(array_keys($this->params), function ($paramName) use ($badParam)
+        {
             return ($paramName !== $badParam);
         });
     }
@@ -72,7 +73,7 @@ class PunkApi
     {
         $response = $this->client->get($this->getEndpoint(),
             [
-                'auth' => [$this->apiKey,$this->apiKey],
+                'auth' => [$this->apiKey, $this->apiKey],
             ]
         );
 
@@ -81,10 +82,15 @@ class PunkApi
 
     private function cleanParams($params)
     {
-        return array_filter(array_keys($params), function ($key)
-        {
-            return in_array($this->allowedParams, $key);
-        });
+
+        return array_filter(
+            $params,
+            function ($key)
+            {
+                return in_array($key, $this->allowedParams);
+            },
+            ARRAY_FILTER_USE_KEY
+        );
     }
 
 
