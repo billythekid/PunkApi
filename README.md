@@ -1,6 +1,8 @@
 # PunkApi
 PHP wrapper to query the PunkAPI https://punkapi.com by [Sam Mason](https://twitter.com/samjbmason)
 
+Full API docs for this project available at https://billythekid.github.io/PunkApi
+
 ##Installation
 via composer `composer require billythekid/punk-api:dev-master`
 
