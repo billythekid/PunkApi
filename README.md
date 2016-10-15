@@ -44,6 +44,7 @@ Add parameters to the search. The following parameter keys are supported:
 *        `hops`          string	Returns all beers matching the supplied hops name, this also matches partial strings
 *        `malt`          string	Returns all beers matching the supplied malt name, this also matches partial strings
 *        `food`          string	Returns all beers matching the supplied food string, this also matches partial strings
+
 ####Example
 ```php
 //get all beers with an ABV between 4 and 9, called *punk*
