@@ -43,7 +43,7 @@ class PunkApi
 
     public function getEndpoint()
     {
-        return $this->apiRoot . http_build_query($this->params);
+        return rtrim($this->apiRoot . http_build_query($this->params),'?');
 
     }
 
@@ -54,19 +54,24 @@ class PunkApi
         return $this;
     }
 
-    public function addParam(Array $params)
+    public function addParams(Array $params)
     {
-        $this->params = $this->cleanParams($params);
+        $this->params = array_merge($this->params, $this->cleanParams($params));
 
         return $this;
     }
 
-    public function removeParam($badParam)
+    public function removeParams(...$badParams)
     {
-        $this->params = array_filter(array_keys($this->params), function ($paramName) use ($badParam)
-        {
-            return ($paramName !== $badParam);
-        });
+        $this->params = array_filter($this->params,
+            function ($paramName) use ($badParams)
+            {
+                return (!in_array($paramName, $badParams));
+            },
+            ARRAY_FILTER_USE_KEY
+        );
+
+        return $this;
     }
 
     public function getBeers()
@@ -77,7 +82,7 @@ class PunkApi
             ]
         );
 
-        return $response->getBody();
+        return \GuzzleHttp\json_decode($response->getBody());
     }
 
     private function cleanParams($params)
