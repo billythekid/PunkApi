@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class billythekid\PunkApi</title>
+
+	<link rel="stylesheet" href="resources/style.css?e99947befd7bf673c6b43ff75e9e0f170c88a60e">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li class="active">
+					<a href="namespace-billythekid.html">
+						billythekid					</a>
+
+						</li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li class="active"><a href="class-billythekid.PunkApi.html">PunkApi</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-billythekid.html" title="Summary of billythekid"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class PunkApi</h1>
+
+
+	<div class="description">
+	<p>Class PunkApi
+Wrapper class for querying the PunkAPI https://punkapi.com
+Docs: https://punkapi.com/documentation</p>
+	</div>
+
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-billythekid.html">billythekid</a><br>
+		<b>Package:</b> billythekid<br>
+
+			<b>Located at</b> <a href="source-class-billythekid.PunkApi.html#7-387" title="Go to source code">PunkApi.php</a>
+		<br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#49-58" title="Go to source code">__construct</a>( <span> <var>$apiKey</var></span> )</code>
+
+		<div class="description short">
+			<p>PunkApi constructor.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>PunkApi constructor.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$apiKey</var></dt>
+					<dd></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="create" id="_create">
+
+		<td class="attributes"><code>
+			 public static
+
+			<code><a href="class-billythekid.PunkApi.html">billythekid\PunkApi</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_create">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#60-69" title="Go to source code">create</a>( <span> <var>$apiKey</var></span> )</code>
+
+		<div class="description short">
+			<p>Static constructor, not really needed since PHP 5.4 but it's nice to have, right?</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Static constructor, not really needed since PHP 5.4 but it's nice to have, right?</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$apiKey</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-billythekid.PunkApi.html">billythekid\PunkApi</a></code>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getEndpoint" id="_getEndpoint">
+
+		<td class="attributes"><code>
+			 public 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getEndpoint">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#71-79" title="Go to source code">getEndpoint</a>( )</code>
+
+		<div class="description short">
+			<p>Returns the URL that would be hit at the current state of this object.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns the URL that would be hit at the current state of this object.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getBeers" id="_getBeers">
+
+		<td class="attributes"><code>
+			 public 
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getBeers">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#81-96" title="Go to source code">getBeers</a>( )</code>
+
+		<div class="description short">
+			<p>Queries the PunkAPI with the current parameters of this object.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Queries the PunkAPI with the current parameters of this object.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					array<br>of beer \StdClass objects
+				</div>
+
+				<h4>Throws</h4>
+				<div class="list">
+					InvalidArgumentException<br>(via GuzzleHttp\json_decode()
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="clearParams" id="_clearParams">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_clearParams">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#98-108" title="Go to source code">clearParams</a>( )</code>
+
+		<div class="description short">
+			<p>Empties the parameters of this object.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Empties the parameters of this object.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="addParams" id="_addParams">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_addParams">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#110-121" title="Go to source code">addParams</a>( <span>array <var>$params</var></span> )</code>
+
+		<div class="description short">
+			<p>Adds parameter options to this object.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Adds parameter options to this object.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$params</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="removeParams" id="_removeParams">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_removeParams">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#123-140" title="Go to source code">removeParams</a>( <span>array <var>$badParams</var></span> )</code>
+
+		<div class="description short">
+			<p>Removes given parameters from this object.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Removes given parameters from this object.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$badParams</var></dt>
+					<dd>$badParams</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getRandomBeer" id="_getRandomBeer">
+
+		<td class="attributes"><code>
+			 public 
+
+			StdClass
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getRandomBeer">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#142-156" title="Go to source code">getRandomBeer</a>( )</code>
+
+		<div class="description short">
+			<p>Get a random beer from the API</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get a random beer from the API</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					StdClass<br>beer  object
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getBeerById" id="_getBeerById">
+
+		<td class="attributes"><code>
+			 public 
+
+			StdClass
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getBeerById">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#158-172" title="Go to source code">getBeerById</a>( <span> <var>$beerId</var></span> )</code>
+
+		<div class="description short">
+			<p>Get a beer from the API by it's ID number</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Get a beer from the API by it's ID number</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					StdClass<br>beer object
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="page" id="_page">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_page">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#174-185" title="Go to source code">page</a>( <span> <var>$pageNumber</var></span> )</code>
+
+		<div class="description short">
+			<p>Set the parameters to return the given page of results</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set the parameters to return the given page of results</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$pageNumber</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="perPage" id="_perPage">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_perPage">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#187-198" title="Go to source code">perPage</a>( <span> <var>$number</var></span> )</code>
+
+		<div class="description short">
+			<p>Set the number of beers to return per page</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Set the number of beers to return per page</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$number</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="abvAbove" id="_abvAbove">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_abvAbove">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#200-211" title="Go to source code">abvAbove</a>( <span> <var>$number</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the abv_gt parameter to the given number.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the abv_gt parameter to the given number.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$number</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="abvBelow" id="_abvBelow">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_abvBelow">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#213-224" title="Go to source code">abvBelow</a>( <span> <var>$number</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the abv_lt parameter to the given number.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the abv_lt parameter to the given number.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$number</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="ibuAbove" id="_ibuAbove">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_ibuAbove">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#226-237" title="Go to source code">ibuAbove</a>( <span> <var>$number</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the ibu_gt parameter to the given number.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the ibu_gt parameter to the given number.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$number</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="ibuBelow" id="_ibuBelow">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_ibuBelow">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#239-250" title="Go to source code">ibuBelow</a>( <span> <var>$number</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the ibu_lt parameter to the given number.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the ibu_lt parameter to the given number.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$number</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="ebcAbove" id="_ebcAbove">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_ebcAbove">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#252-263" title="Go to source code">ebcAbove</a>( <span> <var>$number</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the ebc_gt parameter to the given number.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the ebc_gt parameter to the given number.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$number</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="ebcBelow" id="_ebcBelow">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_ebcBelow">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#265-276" title="Go to source code">ebcBelow</a>( <span> <var>$number</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the ebc_lt parameter to the given number.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the ebc_lt parameter to the given number.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$number</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="named" id="_named">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_named">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#278-289" title="Go to source code">named</a>( <span> <var>$beerName</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the beer_name parameter to the given beer name.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the beer_name parameter to the given beer name.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$beerName</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="yeast" id="_yeast">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_yeast">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#291-302" title="Go to source code">yeast</a>( <span> <var>$yeastName</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the yeast parameter to the given yeast name</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the yeast parameter to the given yeast name</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$yeastName</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="hops" id="_hops">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_hops">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#304-315" title="Go to source code">hops</a>( <span> <var>$hopsName</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the hops parameter to the given hops name</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the hops parameter to the given hops name</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$hopsName</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="malt" id="_malt">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_malt">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#317-328" title="Go to source code">malt</a>( <span> <var>$maltName</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the malt parameter to the given malt name</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the malt parameter to the given malt name</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$maltName</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="brewedBefore" id="_brewedBefore">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_brewedBefore">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#330-341" title="Go to source code">brewedBefore</a>( <span> <var>$date</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the brewed_before parameter to the given date</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the brewed_before parameter to the given date</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$date</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="brewedAfter" id="_brewedAfter">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_brewedAfter">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#343-353" title="Go to source code">brewedAfter</a>( <span> <var>$date</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the brewed_after parameter to the given date</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the brewed_after parameter to the given date</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$date</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="food" id="_food">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_food">#</a>
+		<code><a href="source-class-billythekid.PunkApi.html#355-366" title="Go to source code">food</a>( <span> <var>$foodName</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the food parameter to the given food name</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the food parameter to the given food name</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$foodName</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<br>$this
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>
