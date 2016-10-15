@@ -1,4 +1,12 @@
 # PunkApi
+[![Latest Stable Version](https://poser.pugx.org/billythekid/punk-api/version)](https://packagist.org/packages/billythekid/punk-api)
+[![Total Downloads](https://poser.pugx.org/billythekid/punk-api/downloads)](https://packagist.org/packages/billythekid/punk-api)
+[![Latest Unstable Version](https://poser.pugx.org/billythekid/punk-api/v/unstable)](//packagist.org/packages/billythekid/punk-api)
+[![License](https://poser.pugx.org/billythekid/punk-api/license)](https://packagist.org/packages/billythekid/punk-api)
+[![Monthly Downloads](https://poser.pugx.org/billythekid/punk-api/d/monthly)](https://packagist.org/packages/billythekid/punk-api)
+[![Daily Downloads](https://poser.pugx.org/billythekid/punk-api/d/daily)](https://packagist.org/packages/billythekid/punk-api)
+[![composer.lock available](https://poser.pugx.org/billythekid/punk-api/composerlock)](https://packagist.org/packages/billythekid/punk-api)
+
 PHP wrapper to query the PunkAPI https://punkapi.com by [Sam Mason](https://twitter.com/samjbmason)
 
 Full API docs for this project available at https://billythekid.github.io/PunkApi/class-billythekid.PunkApi.html
