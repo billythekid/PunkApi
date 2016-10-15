@@ -12,7 +12,7 @@ PHP wrapper to query the PunkAPI https://punkapi.com by [Sam Mason](https://twit
 Full API docs for this project available at https://billythekid.github.io/PunkApi/class-billythekid.PunkApi.html
 
 ##Installation
-via composer `composer require billythekid/punk-api:dev-master`
+via composer `composer require billythekid/punk-api`
 
 ##Usage
 
