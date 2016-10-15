@@ -135,8 +135,7 @@ $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
 getRandomBeer()
 getBeerById($beerId)
 ```
-Pull a random beer from the API
-Pull a specific beer from the API by it's ID number 
+Pull a random beer from the API or pull a specific beer from the API by it's ID number 
 ####Example
 ```php
 $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
