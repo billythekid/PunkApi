@@ -16,7 +16,7 @@ via composer `composer require billythekid/punk-api`
 
 ##Usage
 
-Create a new instance of the client
+Create a new instance of the client (use your own API key, Rob…)
 ```php
 $punkApi = new billythekid\PunkApi('YOUR_API_KEY');
 ```
