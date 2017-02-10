@@ -44,6 +44,7 @@ class PunkApi
         'food',          //string   Returns all beers matching the supplied food string, this also matches partial strings
         'page',          //number   Return the beers from the page given (responses are paginated)
         'per_page',      //number   Change the number of beers returned per page (default - 25)
+        'ids',           //string   A list of ID numbers, separated by a pipe | (PunkAPI v2)
     ];
 
     /**
@@ -51,8 +52,12 @@ class PunkApi
      *
      * @param $apiKey
      */
-    public function __construct($apiKey)
+    public function __construct($apiKey = 'v2')
     {
+        if($apiKey === 'v2')
+        {
+            $this->apiRoot = 'https://api.punkapi.com/v2/beers';
+        }
         $this->apiKey = $apiKey;
         $this->client = new Client;
     }
@@ -361,6 +366,23 @@ class PunkApi
     public function food($foodName)
     {
         $this->addParams(['food' => $foodName]);
+
+        return $this;
+    }
+
+    /**
+     * Sets the ids paramater to the given ids
+     * @param mixed $ids (array of ID numbers or piped string)
+     * @return $this
+     */
+    public function ids($ids)
+    {
+        if (is_array($ids))
+        {
+            $ids = join("|",$ids);
+        }
+
+        $this->addParams(['ids' => $ids]);
 
         return $this;
     }

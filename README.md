@@ -16,15 +16,14 @@ via composer `composer require billythekid/punk-api`
 
 ##Usage
 
-Create a new instance of the client (use your own API key, Rob…)
+Create a new instance of the client
 ```php
-$punkApi = new billythekid\PunkApi('YOUR_API_KEY');
+$punkApi = new billythekid\PunkApi();
 ```
 or
 ```php
-$punkApi = billythekid\PunkApi::create('YOUR_API_KEY');
+$punkApi = billythekid\PunkApi::create();
 ```
-(grab your api key at https://punkapi.com)
 
 ###Methods
 
@@ -56,7 +55,7 @@ Add parameters to the search. The following parameter keys are supported:
 * `food`          string        Returns all beers matching the supplied food string, this also matches partial strings
 * `page`          number        Return the beers from the page given (responses are paginated)
 * `per_page`      number        Change the number of beers returned per page (default - 25)
-
+* `ids`           string        New for V2 - pipe separated string of ID numbers (192|224 etc) 
 ###The following chainable methods can be used to alter the parameters if you prefer
 
 ```php
@@ -75,6 +74,7 @@ malt($maltName)
 food($foodName)
 page($pageNumber)
 perPage($number)
+ids($ids) // can pass an array of ids instead of piping them into a string here.
 ```
 
 ####Examples
@@ -83,14 +83,14 @@ perPage($number)
 $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
   ->addParams(['abv_gt' => 4, 'abv_lt' => 9])
   ->addParams(['beer_name' => "punk"])
-  ->getEndpoint(); // https://punkapi.com/api/v1/beers?abv_gt=4&abv_lt=9&beer_name=punk
+  ->getEndpoint(); // https://punkapi.com/v2/beers?abv_gt=4&abv_lt=9&beer_name=punk
 
 //Chained method for same result
 $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
   ->abvAbove(4)
   ->abvBelow(9)
   ->named("punk")
-  ->getEndpoint(); // https://punkapi.com/api/v1/beers?abv_gt=4&abv_lt=9&beer_name=punk
+  ->getEndpoint(); // https://punkapi.com/v2/beers?abv_gt=4&abv_lt=9&beer_name=punk
 ```
 
 ---
@@ -105,7 +105,7 @@ $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
     ->addParams(['beer_name' => "punk"])
     ->removeParams('beer_name', 'abv_gt')
     ->addParams(['ibu_lt'=> 100])
-    ->getEndpoint(); // https://punkapi.com/api/v1/beers?abv_lt=9&ibu_lt=100
+    ->getEndpoint(); // https://punkapi.com/v2/beers?abv_lt=9&ibu_lt=100
 ```
 
 -
@@ -120,7 +120,7 @@ $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
     ->addParams(['abv_gt' => 4, 'abv_lt' => 9])
     ->addParams(['beer_name' => "punk"])
     ->clearParams()
-    ->getEndpoint(); //https://punkapi.com/api/v1/beers
+    ->getEndpoint(); //https://punkapi.com/v2/beers
 ```
 -
 ```php
@@ -147,5 +147,16 @@ Pull a random beer from the API or pull a specific beer from the API by it's ID 
 ####Example
 ```php
 $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
-    ->getRandomBeer(); // returns a beer object (StdObject) 
+    ->getRandomBeer(); // returns an array with a single beer object (StdObject) 
 ```
+---
+###Changelog
+
+#####v 1.1.0 - Feb 10, 2017
+* Non-breaking update to use version 2 of the Punk Api by default
+* Updated docs and readme
+* Added `->ids()` endpoint and `ids` paramater
+* Added tests
+
+#####v 1.0.0 - Oct 15, 2016
+* Initial release
