@@ -54,9 +54,12 @@ class PunkApi
      */
     public function __construct($apiKey = 'v2')
     {
-        if($apiKey === 'v2')
+        if ($apiKey === 'v2')
         {
             $this->apiRoot = 'https://api.punkapi.com/v2/beers';
+        } else
+        {
+            $this->deprecated();
         }
         $this->apiKey = $apiKey;
         $this->client = new Client;
@@ -91,6 +94,13 @@ class PunkApi
      */
     public function getBeers()
     {
+        if ($this->apiKey === 'v2')
+        {
+            $response = $response = $this->client->get($this->getEndpoint());
+
+            return \GuzzleHttp\json_decode($response->getBody());
+        }
+
         $response = $this->client->get($this->getEndpoint(),
             [
                 'auth' => [$this->apiKey, $this->apiKey],
@@ -167,6 +177,12 @@ class PunkApi
      */
     public function getBeerById($beerId)
     {
+        if ($this->apiKey === 'v2')
+        {
+            $response = $this->client->get($this->apiRoot . '/' . $beerId);
+
+            return \GuzzleHttp\json_decode($response->getBody());
+        }
         $response = $this->client->get($this->apiRoot . '/' . $beerId,
             [
                 'auth' => [$this->apiKey, $this->apiKey],
@@ -174,6 +190,7 @@ class PunkApi
         );
 
         return \GuzzleHttp\json_decode($response->getBody());
+
     }
 
     /**
@@ -347,6 +364,7 @@ class PunkApi
 
     /**
      * Sets the brewed_after parameter to the given date
+     *
      * @param $date
      * @return $this
      */
@@ -371,7 +389,8 @@ class PunkApi
     }
 
     /**
-     * Sets the ids paramater to the given ids
+     * Sets the ids parameter to the given ids
+     *
      * @param mixed $ids (array of ID numbers or piped string)
      * @return $this
      */
@@ -379,7 +398,7 @@ class PunkApi
     {
         if (is_array($ids))
         {
-            $ids = join("|",$ids);
+            $ids = join("|", $ids);
         }
 
         $this->addParams(['ids' => $ids]);
@@ -404,6 +423,11 @@ class PunkApi
             },
             ARRAY_FILTER_USE_KEY
         );
+    }
+
+    private function deprecated()
+    {
+        trigger_error("V1 of the API is deprecated and should not be used.", E_USER_NOTICE);
     }
 
 }
