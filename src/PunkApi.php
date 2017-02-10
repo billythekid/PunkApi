@@ -427,7 +427,7 @@ class PunkApi
 
     private function deprecated()
     {
-        trigger_error("V1 of the API is deprecated and should not be used.", E_USER_NOTICE);
+        trigger_error("V1 of the API is deprecated and should not be used.", E_USER_DEPRECATED);
     }
 
 }
