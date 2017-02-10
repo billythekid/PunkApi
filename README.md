@@ -83,14 +83,14 @@ ids($ids) // can pass an array of ids instead of piping them into a string here.
 $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
   ->addParams(['abv_gt' => 4, 'abv_lt' => 9])
   ->addParams(['beer_name' => "punk"])
-  ->getEndpoint(); // https://punkapi.com/v2/beers?abv_gt=4&abv_lt=9&beer_name=punk
+  ->getEndpoint(); // https://api.punkapi.com/v2/beers?abv_gt=4&abv_lt=9&beer_name=punk
 
 //Chained method for same result
 $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
   ->abvAbove(4)
   ->abvBelow(9)
   ->named("punk")
-  ->getEndpoint(); // https://punkapi.com/v2/beers?abv_gt=4&abv_lt=9&beer_name=punk
+  ->getEndpoint(); // https://api.punkapi.com/v2/beers?abv_gt=4&abv_lt=9&beer_name=punk
 ```
 
 ---
@@ -105,7 +105,7 @@ $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
     ->addParams(['beer_name' => "punk"])
     ->removeParams('beer_name', 'abv_gt')
     ->addParams(['ibu_lt'=> 100])
-    ->getEndpoint(); // https://punkapi.com/v2/beers?abv_lt=9&ibu_lt=100
+    ->getEndpoint(); // https://api.punkapi.com/v2/beers?abv_lt=9&ibu_lt=100
 ```
 
 -
@@ -120,7 +120,7 @@ $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
     ->addParams(['abv_gt' => 4, 'abv_lt' => 9])
     ->addParams(['beer_name' => "punk"])
     ->clearParams()
-    ->getEndpoint(); //https://punkapi.com/v2/beers
+    ->getEndpoint(); //https://api.punkapi.com/v2/beers
 ```
 -
 ```php
