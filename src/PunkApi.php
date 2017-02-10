@@ -214,7 +214,7 @@ class PunkApi
      */
     public function perPage($number)
     {
-        $this->addParams(['per_page', $number]);
+        $this->addParams(['per_page' => $number]);
 
         return $this;
     }
