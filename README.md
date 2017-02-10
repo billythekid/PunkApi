@@ -57,6 +57,7 @@ Add parameters to the search. The following parameter keys are supported:
 * `page`          number        Return the beers from the page given (responses are paginated)
 * `per_page`      number        Change the number of beers returned per page (default - 25)
 * `ids`           string        New for V2 - pipe separated string of ID numbers (192|224 etc) 
+
 ###The following chainable methods can be used to alter the parameters if you prefer
 
 ```php
