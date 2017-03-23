@@ -154,8 +154,11 @@ $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
 ---
 ###Changelog
 
+#####v 1.1.2 - Mar 23, 2017
+* Bugfix - not passing a param to :create() threw an error
+
 #####v 1.1.1 - Feb 10, 2017
-* Bugfix - perPage() wasn't working properly.
+* Bugfix - perPage() wasn't working properly
 * Added more tests
 
 #####v 1.1.0 - Feb 10, 2017
