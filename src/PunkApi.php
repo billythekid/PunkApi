@@ -71,7 +71,7 @@ class PunkApi
      * @param $apiKey
      * @return PunkApi
      */
-    public static function create($apiKey)
+    public static function create($apiKey = 'v2')
     {
         return new self($apiKey);
     }
