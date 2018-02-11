@@ -12,10 +12,10 @@ PHP wrapper to query the PunkAPI https://punkapi.com by [Sam Mason](https://twit
 
 Full API docs for this project available at https://billythekid.github.io/PunkApi/class-billythekid.PunkApi.html
 
-##Installation
+## Installation
 via composer `composer require billythekid/punk-api`
 
-##Usage
+## Usage
 
 Create a new instance of the client
 ```php
@@ -26,7 +26,7 @@ or
 $punkApi = billythekid\PunkApi::create();
 ```
 
-###Methods
+### Methods
 
 ```php
 getEndpoint()
@@ -58,7 +58,7 @@ Add parameters to the search. The following parameter keys are supported:
 * `per_page`      number        Change the number of beers returned per page (default - 25)
 * `ids`           string        New for V2 - pipe separated string of ID numbers (192|224 etc) 
 
-###The following chainable methods can be used to alter the parameters if you prefer
+### The following chainable methods can be used to alter the parameters if you prefer
 
 ```php
 abvAbove($number)
@@ -79,7 +79,7 @@ perPage($number)
 ids($ids) // can pass an array of ids instead of piping them into a string here.
 ```
 
-####Examples
+#### Examples
 ```php
 //get all beers with an ABV between 4 and 9, called *punk*
 $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
@@ -100,7 +100,7 @@ $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
 removeParams($param1 [, $param2, ..., $paramN])
 ```
 Removes parameters from the search. This method is chainable
-####Example
+#### Example
 ```php
 $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
     ->addParams(['abv_gt' => 4, 'abv_lt' => 9])
@@ -116,7 +116,7 @@ $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
 clearParams()
 ```
 Empties all the parameters. This method is chainable.
-####Example
+#### Example
 ```php
 $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
     ->addParams(['abv_gt' => 4, 'abv_lt' => 9])
@@ -130,7 +130,7 @@ getBeers()
 ```
 Perform a query on the API, returns an array of beers.
 
-####Example
+#### Example
 ```php
 $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
     ->addParams(['abv_gt' => 4, 'abv_lt' => 9])
@@ -146,26 +146,26 @@ getRandomBeer()
 getBeerById($beerId)
 ```
 Pull a random beer from the API or pull a specific beer from the API by it's ID number 
-####Example
+#### Example
 ```php
 $punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
     ->getRandomBeer(); // returns an array with a single beer object (StdObject) 
 ```
 ---
-###Changelog
+### Changelog
 
-#####v 1.1.2 - Mar 23, 2017
+##### v 1.1.2 - Mar 23, 2017
 * Bugfix - not passing a param to :create() threw an error
 
-#####v 1.1.1 - Feb 10, 2017
+##### v 1.1.1 - Feb 10, 2017
 * Bugfix - perPage() wasn't working properly
 * Added more tests
 
-#####v 1.1.0 - Feb 10, 2017
+##### v 1.1.0 - Feb 10, 2017
 * Non-breaking update to use version 2 of the Punk Api by default
 * Updated docs and readme
 * Added `->ids()` endpoint and `ids` paramater
 * Added tests
 
-#####v 1.0.0 - Oct 15, 2016
+##### v 1.0.0 - Oct 15, 2016
 * Initial release
