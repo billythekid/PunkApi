@@ -6,7 +6,6 @@
 [![Monthly Downloads](https://poser.pugx.org/billythekid/punk-api/d/monthly)](https://packagist.org/packages/billythekid/punk-api)
 [![Daily Downloads](https://poser.pugx.org/billythekid/punk-api/d/daily)](https://packagist.org/packages/billythekid/punk-api)
 [![composer.lock available](https://poser.pugx.org/billythekid/punk-api/composerlock)](https://packagist.org/packages/billythekid/punk-api)
-[![Build Status](https://travis-ci.org/billythekid/PunkApi.svg?branch=master)](https://travis-ci.org/billythekid/PunkApi)
 
 PHP wrapper to query the PunkAPI https://punkapi.com by [Sam Mason](https://twitter.com/samjbmason)
 
