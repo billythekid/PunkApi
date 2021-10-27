@@ -38,6 +38,13 @@ class PunkApiTest extends \PHPUnit_Framework_TestCase
         $this->punkApi->clearParams();
     }
 
+    // test that the API returns a collection of beers
+    public function testGetBeers()
+    {
+        $this->assertInstanceOf('Illuminate\Support\Collection', $this->beers);
+    }
+    
+
     public function testItReturns25BeersByDefault()
     {
         $this->assertEquals(25, count($this->beers));
