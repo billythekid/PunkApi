@@ -94,6 +94,20 @@ class PunkApiTest extends TestCase
         $this->assertStringContainsString('ids=1,2,3', urldecode($endpoint));
     }
 
+    public function testIdsNormalizesPipesToCommasForV3(): void
+    {
+        $api = new PunkApi('v3');
+        $endpoint = $api->ids('1|2|3')->getEndpoint();
+        $this->assertStringContainsString('ids=1,2,3', urldecode($endpoint));
+    }
+
+    public function testIdsNormalizesCommasToPipesForV2(): void
+    {
+        $api = new PunkApi('v2');
+        $endpoint = $api->ids('1,2,3')->getEndpoint();
+        $this->assertStringContainsString('ids=1|2|3', urldecode($endpoint));
+    }
+
     public function testAbvAboveSetsEndpoint(): void
     {
         $endpoint = $this->punkApi->abvAbove(10)->getEndpoint();
