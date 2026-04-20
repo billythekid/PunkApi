@@ -464,6 +464,16 @@ class PunkApi
         {
             $separator = $this->apiVersion === 'v3' ? ',' : '|';
             $ids = join($separator, $ids);
+        } else
+        {
+            // Normalize separator for the active API version
+            if ($this->apiVersion === 'v3')
+            {
+                $ids = str_replace('|', ',', $ids);
+            } else
+            {
+                $ids = str_replace(',', '|', $ids);
+            }
         }
 
         $this->addParams(['ids' => $ids]);

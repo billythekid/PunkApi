@@ -163,6 +163,9 @@ $beers = $punkApi->ids([1, 5, 10])->getBeers();
 
 ## Changelog
 
+#### v 2.0.1
+* Bugfix - `ids()` now normalizes separators automatically (pipes → commas on v3, commas → pipes on v2) so existing code passing pipe-separated strings continues to work
+
 #### v 2.0.0
 * **Breaking**: Removed API key parameter from constructor (v3 API requires no auth)
 * **Breaking**: Requires PHP >= 8.3
