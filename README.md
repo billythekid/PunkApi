@@ -1,170 +1,192 @@
 # PunkApi
 [![Latest Stable Version](https://poser.pugx.org/billythekid/punk-api/version)](https://packagist.org/packages/billythekid/punk-api)
 [![Total Downloads](https://poser.pugx.org/billythekid/punk-api/downloads)](https://packagist.org/packages/billythekid/punk-api)
-[![Latest Unstable Version](https://poser.pugx.org/billythekid/punk-api/v/unstable)](//packagist.org/packages/billythekid/punk-api)
 [![License](https://poser.pugx.org/billythekid/punk-api/license)](https://packagist.org/packages/billythekid/punk-api)
-[![Monthly Downloads](https://poser.pugx.org/billythekid/punk-api/d/monthly)](https://packagist.org/packages/billythekid/punk-api)
-[![Daily Downloads](https://poser.pugx.org/billythekid/punk-api/d/daily)](https://packagist.org/packages/billythekid/punk-api)
-[![composer.lock available](https://poser.pugx.org/billythekid/punk-api/composerlock)](https://packagist.org/packages/billythekid/punk-api)
 
-PHP wrapper to query the PunkAPI https://punkapi.com by [Sam Mason](https://twitter.com/samjbmason)
+A PHP wrapper for the [PunkAPI](https://punkapi-alxiw.amvera.io/v3/) — all 415 BrewDog DIY Dog recipes.
 
-Full API docs for this project available at https://billythekid.github.io/PunkApi/class-billythekid.PunkApi.html
+The original PunkAPI by [Sam Mason](https://github.com/sammdec/punkapi) is no longer online. This wrapper now defaults to the **v3 API** hosted by [alxiw](https://github.com/alxiw/punkapi), and includes **bundled offline data** as a fallback so your code always gets results — even if the API is unreachable.
+
+## Requirements
+
+- PHP >= 8.3
+- Guzzle ^7.0 (installed automatically via Composer)
 
 ## Installation
-via composer `composer require billythekid/punk-api`
 
-## Usage
-
-Create a new instance of the client
-```php
-$punkApi = new billythekid\PunkApi();
-```
-or
-```php
-$punkApi = billythekid\PunkApi::create();
+```bash
+composer require billythekid/punk-api
 ```
 
-### Methods
+## Quick Start
 
 ```php
-getEndpoint()
+use billythekid\PunkApi;
+
+$punkApi = PunkApi::create();
+
+// Get beers (hits the live API, falls back to local data automatically)
+$beers = $punkApi->getBeers();
+
+// Check if the fallback was used
+if ($punkApi->usedFallback()) {
+    echo "Results came from bundled local data";
+}
 ```
-Returns the current endpoint that will be hit based on the options provided. Good to check what'll be hit without actually hitting it.
-This method is not chainable.
 
--
-```php
-addParams(Array $params)
-```
-This method is chainable.
+## API Versions
 
-Add parameters to the search. The following parameter keys are supported:
-* `abv_gt`        number        Returns all beers with ABV greater than the number
-* `abv_lt`        number        Returns all beers with ABV less than the number
-* `ibu_gt`        number        Returns all beers with IBU greater than the number
-* `ibu_lt`        number        Returns all beers with IBU less than the number
-* `ebc_gt`        number        Returns all beers with EBC greater than the number
-* `ebc_lt`        number        Returns all beers with EBC less than the number
-* `beer_name`     string        Returns all beers matching the supplied name (this will match partial strings as well so e.g punk will return Punk IPA)
-* `yeast`         string        Returns all beers matching the supplied yeast name, this also matches partial strings
-* `brewed_before` date(string)  Returns all beers brewed before this date, the date format is mm-yyyy e.g 10-2011
-* `brewed_after`  date(string)  Returns all beers brewed after this date, the date format is mm-yyyy e.g 10-2011
-* `hops`          string        Returns all beers matching the supplied hops name, this also matches partial strings
-* `malt`          string        Returns all beers matching the supplied malt name, this also matches partial strings
-* `food`          string        Returns all beers matching the supplied food string, this also matches partial strings
-* `page`          number        Return the beers from the page given (responses are paginated)
-* `per_page`      number        Change the number of beers returned per page (default - 25)
-* `ids`           string        New for V2 - pipe separated string of ID numbers (192|224 etc) 
-
-### The following chainable methods can be used to alter the parameters if you prefer
+The wrapper defaults to **v3** (recommended). The legacy v2 API is still supported but may be offline.
 
 ```php
-abvAbove($number)
-abvBelow($number)
-ibuAbove($number)
-ibuBelow($number)
-ebcAbove($number)
-ebcBelow($number)
-named($beerName)
-yeast($yeastName)
-brewedBefore($date)
-brewedAfter($date)
-hops($hopsName)
-malt($maltName)
-food($foodName)
-page($pageNumber)
-perPage($number)
-ids($ids) // can pass an array of ids instead of piping them into a string here.
+// v3 (default) — https://punkapi-alxiw.amvera.io/v3/
+$punkApi = PunkApi::create();
+
+// v2 (legacy) — https://api.punkapi.com/v2/
+$punkApi = PunkApi::create('v2');
 ```
 
-#### Examples
-```php
-//get all beers with an ABV between 4 and 9, called *punk*
-$punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
-  ->addParams(['abv_gt' => 4, 'abv_lt' => 9])
-  ->addParams(['beer_name' => "punk"])
-  ->getEndpoint(); // https://api.punkapi.com/v2/beers?abv_gt=4&abv_lt=9&beer_name=punk
+## Offline Fallback
 
-//Chained method for same result
-$punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
-  ->abvAbove(4)
-  ->abvBelow(9)
-  ->named("punk")
-  ->getEndpoint(); // https://api.punkapi.com/v2/beers?abv_gt=4&abv_lt=9&beer_name=punk
-```
+All 415 beers from DIY Dog v8 are bundled in `data/beers.json`. When the live API can't be reached (connection timeout, DNS failure, etc.), the wrapper automatically filters and paginates from this local dataset. The same query parameters work identically whether hitting the API or the fallback.
 
----
-```php
-removeParams($param1 [, $param2, ..., $paramN])
-```
-Removes parameters from the search. This method is chainable
-#### Example
-```php
-$punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
-    ->addParams(['abv_gt' => 4, 'abv_lt' => 9])
-    ->addParams(['beer_name' => "punk"])
-    ->removeParams('beer_name', 'abv_gt')
-    ->addParams(['ibu_lt'=> 100])
-    ->getEndpoint(); // https://api.punkapi.com/v2/beers?abv_lt=9&ibu_lt=100
-```
-
--
+Use `usedFallback()` to check which source was used:
 
 ```php
-clearParams()
-```
-Empties all the parameters. This method is chainable.
-#### Example
-```php
-$punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
-    ->addParams(['abv_gt' => 4, 'abv_lt' => 9])
-    ->addParams(['beer_name' => "punk"])
-    ->clearParams()
-    ->getEndpoint(); //https://api.punkapi.com/v2/beers
-```
--
-```php
-getBeers()
-```
-Perform a query on the API, returns an array of beers.
+$beers = $punkApi->named('punk')->getBeers();
 
-#### Example
-```php
-$punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
-    ->addParams(['abv_gt' => 4, 'abv_lt' => 9])
-    ->addParams(['beer_name' => "punk"])
-    ->removeParams('beer_name', 'abv_gt')
-    ->addParams(['ibu_lt'=> 100])
-    ->getBeers(); // returns a PHP array of beer objects - see the Example JSON Response at https://punkapi.com/documentation
+if ($punkApi->usedFallback()) {
+    // data came from local bundle
+}
 ```
--
+
+## Methods
+
+### Creating an Instance
 
 ```php
-getRandomBeer()
-getBeerById($beerId)
+$punkApi = new PunkApi();          // v3 by default
+$punkApi = PunkApi::create();      // static constructor
+$punkApi = PunkApi::create('v2');   // use legacy v2 API
 ```
-Pull a random beer from the API or pull a specific beer from the API by it's ID number 
-#### Example
+
+### Querying Beers
+
 ```php
-$punkApi = \billythekid\PunkApi::create("PUNK_API_KEY")
-    ->getRandomBeer(); // returns an array with a single beer object (StdObject) 
+getBeers()        // Returns an array of beer objects matching current params
+getBeerById($id)  // Returns an array with a single beer by ID
+getRandomBeer()   // Returns an array with a single random beer
 ```
----
-### Changelog
 
-##### v 1.1.2 - Mar 23, 2017
-* Bugfix - not passing a param to :create() threw an error
+### Building the Endpoint
 
-##### v 1.1.1 - Feb 10, 2017
-* Bugfix - perPage() wasn't working properly
+```php
+getEndpoint()     // Returns the URL that would be hit (does not make a request)
+```
+
+### Parameters
+
+Use `addParams()` with an associative array, or the chainable helper methods:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `abv_gt` | number | Beers with ABV greater than this |
+| `abv_lt` | number | Beers with ABV less than this |
+| `ibu_gt` | number | Beers with IBU greater than this |
+| `ibu_lt` | number | Beers with IBU less than this |
+| `ebc_gt` | number | Beers with EBC greater than this |
+| `ebc_lt` | number | Beers with EBC less than this |
+| `beer_name` | string | Partial name match (e.g. "punk" matches Punk IPA) |
+| `yeast` | string | Partial yeast name match |
+| `hops` | string | Partial hops name match |
+| `malt` | string | Partial malt name match |
+| `food` | string | Partial food pairing match |
+| `brewed_before` | string | Beers brewed before this date (mm-yyyy) |
+| `brewed_after` | string | Beers brewed after this date (mm-yyyy) |
+| `page` | number | Page number for pagination |
+| `per_page` | number | Results per page (default: 25 for v2, 30 for v3) |
+| `ids` | string | Comma-separated IDs for v3, pipe-separated for v2 |
+
+### Chainable Helper Methods
+
+```php
+$punkApi->abvAbove(4)
+    ->abvBelow(9)
+    ->named('punk')
+    ->getBeers();
+```
+
+All helpers: `abvAbove()`, `abvBelow()`, `ibuAbove()`, `ibuBelow()`, `ebcAbove()`, `ebcBelow()`, `named()`, `yeast()`, `brewedBefore()`, `brewedAfter()`, `hops()`, `malt()`, `food()`, `page()`, `perPage()`, `ids()`
+
+The `ids()` method accepts an array of IDs or a string. It automatically formats them for the active API version (commas for v3, pipes for v2).
+
+### Managing Parameters
+
+```php
+addParams(['abv_gt' => 4, 'beer_name' => 'punk'])  // Add params (chainable)
+removeParams('beer_name', 'abv_gt')                  // Remove specific params (chainable)
+clearParams()                                         // Remove all params (chainable)
+```
+
+## Examples
+
+```php
+use billythekid\PunkApi;
+
+$punkApi = PunkApi::create();
+
+// Get all beers with ABV between 4 and 9, named "punk"
+$beers = $punkApi
+    ->abvAbove(4)
+    ->abvBelow(9)
+    ->named('punk')
+    ->getBeers();
+
+// Same thing with addParams
+$beers = $punkApi
+    ->addParams(['abv_gt' => 4, 'abv_lt' => 9, 'beer_name' => 'punk'])
+    ->getBeers();
+
+// Get a specific beer
+$beer = $punkApi->getBeerById(1);
+
+// Get a random beer
+$beer = $punkApi->getRandomBeer();
+
+// Check the endpoint without making a request
+$url = $punkApi->named('ipa')->getEndpoint();
+// https://punkapi-alxiw.amvera.io/v3/beers?beer_name=ipa&page=1
+
+// Get beers by multiple IDs
+$beers = $punkApi->ids([1, 5, 10])->getBeers();
+```
+
+## Changelog
+
+#### v 2.0.0
+* **Breaking**: Removed API key parameter from constructor (v3 API requires no auth)
+* **Breaking**: Requires PHP >= 8.3
+* Default API changed to v3 (`punkapi-alxiw.amvera.io`)
+* Added offline fallback with bundled data (415 beers from DIY Dog v8)
+* Added `usedFallback()` method
+* `ids()` now uses commas for v3 (pipes still used for v2)
+* Updated to Guzzle ^7.0 and PHPUnit ^13.0
+
+#### v 1.1.2 - Mar 23, 2017
+* Bugfix - not passing a param to `create()` threw an error
+
+#### v 1.1.1 - Feb 10, 2017
+* Bugfix - `perPage()` wasn't working properly
 * Added more tests
 
-##### v 1.1.0 - Feb 10, 2017
-* Non-breaking update to use version 2 of the Punk Api by default
-* Updated docs and readme
-* Added `->ids()` endpoint and `ids` paramater
+#### v 1.1.0 - Feb 10, 2017
+* Non-breaking update to use version 2 of the Punk API by default
+* Added `ids()` method and `ids` parameter
 * Added tests
 
-##### v 1.0.0 - Oct 15, 2016
+#### v 1.0.0 - Oct 15, 2016
 * Initial release
+
+## License
+
+[MIT](LICENSE)
