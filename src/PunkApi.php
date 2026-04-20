@@ -3,77 +3,95 @@
 namespace billythekid;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Class PunkApi
- * Wrapper class for querying the PunkAPI https://punkapi.com
- * Docs: https://punkapi.com/documentation
+ * Wrapper class for querying the PunkAPI.
+ *
+ * Supports the v3 API at https://punkapi-alxiw.amvera.io/v3/ (default)
+ * and the legacy v2 API at https://api.punkapi.com/v2/.
+ * Falls back to bundled local data (415 beers from DIY Dog v8) when the API is unreachable.
  *
  * @package billythekid
  */
 class PunkApi
 {
-    /**
-     * @var string
-     */
-    private $apiKey;
-    /**
-     * @var string
-     */
-    private $apiRoot = 'https://punkapi.com/api/v1/beers';
-    /**
-     * @var array
-     */
-    private $params = [];
-    /**
-     * @var array
-     */
-    private $allowedParams = [
+    private const IMAGE_BASE_URL = 'https://punkapi-alxiw.amvera.io/v3/images/';
+    private const IMAGE_FALLBACK_BASE_URL = 'https://raw.githubusercontent.com/alxiw/punkapi/master/img/';
+
+    private string $apiVersion;
+    private string $apiRoot;
+    private Client $client;
+    private array $params = [];
+    private bool $usedFallback = false;
+    private static ?array $localData = null;
+
+    private array $allowedParams = [
         'abv_gt',        //number   Returns all beers with ABV greater than the supplied number
         'abv_lt',        //number   Returns all beers with ABV less than the supplied number
         'ibu_gt',        //number   Returns all beers with IBU greater than the supplied number
         'ibu_lt',        //number   Returns all beers with IBU less than the supplied number
         'ebc_gt',        //number   Returns all beers with EBC greater than the supplied number
         'ebc_lt',        //number   Returns all beers with EBC less than the supplied number
-        'beer_name',     //string   Returns all beers matching the supplied name (this will match partial strings as well so e.g punk will return Punk IPA)
-        'yeast',         //string   Returns all beers matching the supplied yeast name, this also matches partial strings
-        'brewed_before', //date     Returns all beers brewed before this date, the date format is mm-yyyy e.g 10-2011
-        'brewed_after',  //date     Returns all beers brewed after this date, the date format is mm-yyyy e.g 10-2011
-        'hops',          //string   Returns all beers matching the supplied hops name, this also matches partial strings
-        'malt',          //string   Returns all beers matching the supplied malt name, this also matches partial strings
-        'food',          //string   Returns all beers matching the supplied food string, this also matches partial strings
+        'beer_name',     //string   Returns all beers matching the supplied name (partial match)
+        'yeast',         //string   Returns all beers matching the supplied yeast name (partial match)
+        'brewed_before', //date     Returns all beers brewed before this date (mm-yyyy or yyyy)
+        'brewed_after',  //date     Returns all beers brewed after this date (mm-yyyy or yyyy)
+        'hops',          //string   Returns all beers matching the supplied hops name (partial match)
+        'malt',          //string   Returns all beers matching the supplied malt name (partial match)
+        'food',          //string   Returns all beers matching the supplied food string (partial match)
         'page',          //number   Return the beers from the page given (responses are paginated)
-        'per_page',      //number   Change the number of beers returned per page (default - 25)
-        'ids',           //string   A list of ID numbers, separated by a pipe | (PunkAPI v2)
+        'per_page',      //number   Change the number of beers returned per page (default: 25 for v2, 30 for v3)
+        'ids',           //string   A list of ID numbers (comma-separated for v3, pipe-separated for v2)
     ];
 
     /**
      * PunkApi constructor.
      *
-     * @param $apiKey
+     * @param string $apiVersion API version to use: 'v3' (default, recommended) or 'v2' (legacy)
+     * @param Client|null $client Optional Guzzle client for dependency injection / testing
      */
-    public function __construct($apiKey = 'v2')
+    public function __construct(string $apiVersion = 'v3', ?Client $client = null)
     {
-        if ($apiKey === 'v2')
+        $this->apiVersion = $apiVersion;
+
+        if ($apiVersion === 'v3')
+        {
+            $this->apiRoot = 'https://punkapi-alxiw.amvera.io/v3/beers';
+        } elseif ($apiVersion === 'v2')
         {
             $this->apiRoot = 'https://api.punkapi.com/v2/beers';
         } else
         {
-            $this->deprecated();
+            trigger_error("Only v2 and v3 of the API are supported. v3 is recommended.", E_USER_WARNING);
+            $this->apiRoot = 'https://punkapi-alxiw.amvera.io/v3/beers';
+            $this->apiVersion = 'v3';
         }
-        $this->apiKey = $apiKey;
-        $this->client = new Client;
+
+        $this->client = $client ?? new Client(['timeout' => 5, 'connect_timeout' => 3]);
     }
 
     /**
-     * Static constructor, not really needed since PHP 5.4 but it's nice to have, right?
+     * Static constructor.
      *
-     * @param $apiKey
+     * @param string $apiVersion
+     * @param Client|null $client
      * @return PunkApi
      */
-    public static function create($apiKey = 'v2')
+    public static function create(string $apiVersion = 'v3', ?Client $client = null): self
     {
-        return new self($apiKey);
+        return new self($apiVersion, $client);
+    }
+
+    /**
+     * Returns true if the last request used the bundled fallback data instead of the live API.
+     *
+     * @return bool
+     */
+    public function usedFallback(): bool
+    {
+        return $this->usedFallback;
     }
 
     /**
@@ -81,33 +99,46 @@ class PunkApi
      *
      * @return string
      */
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
-        return rtrim($this->apiRoot . '?' . http_build_query($this->params), '?');
+        $params = $this->params;
+
+        // v3 requires page parameter
+        if ($this->apiVersion === 'v3' && !isset($params['page']))
+        {
+            $params['page'] = 1;
+        }
+
+        return rtrim($this->apiRoot . '?' . http_build_query($params), '?');
     }
 
     /**
-     * Queries the PunkAPI with the current parameters of this object.
+     * Queries the PunkAPI with the current parameters.
+     * Falls back to bundled local data if the API is unreachable.
      *
      * @return array of beer \StdClass objects
-     * @throws \InvalidArgumentException (via GuzzleHttp\json_decode()
      */
-    public function getBeers()
+    public function getBeers(): array
     {
-        if ($this->apiKey === 'v2')
-        {
-            $response = $response = $this->client->get($this->getEndpoint());
+        $this->usedFallback = false;
 
-            return \GuzzleHttp\json_decode($response->getBody());
+        try
+        {
+            $response = $this->client->get($this->getEndpoint());
+            $decoded = json_decode($response->getBody()->getContents());
+
+            if (is_array($decoded))
+            {
+                return $this->normalizeImageUrls($decoded);
+            }
+        } catch (GuzzleException)
+        {
+            // Fall through to local data
         }
 
-        $response = $this->client->get($this->getEndpoint(),
-            [
-                'auth' => [$this->apiKey, $this->apiKey],
-            ]
-        );
+        $this->usedFallback = true;
 
-        return \GuzzleHttp\json_decode($response->getBody());
+        return $this->normalizeImageUrls($this->filterLocalData($this->loadLocalData()));
     }
 
     /**
@@ -115,7 +146,7 @@ class PunkApi
      *
      * @return $this
      */
-    public function clearParams()
+    public function clearParams(): self
     {
         $this->params = [];
 
@@ -128,7 +159,7 @@ class PunkApi
      * @param array $params
      * @return $this
      */
-    public function addParams(Array $params)
+    public function addParams(array $params): self
     {
         $this->params = array_merge($this->params, $this->cleanParams($params));
 
@@ -138,10 +169,10 @@ class PunkApi
     /**
      * Removes given parameters from this object.
      *
-     * @param array ...$badParams
+     * @param string ...$badParams
      * @return $this
      */
-    public function removeParams(...$badParams)
+    public function removeParams(string ...$badParams): self
     {
         $this->params = array_filter($this->params,
             function ($paramName) use ($badParams)
@@ -155,51 +186,83 @@ class PunkApi
     }
 
     /**
-     * Get a random beer from the API
+     * Get a random beer.
+     * Falls back to a random beer from bundled data if the API is unreachable.
      *
-     * @return \StdClass beer  object
+     * @return array containing a single beer \StdClass object
      */
-    public function getRandomBeer()
+    public function getRandomBeer(): array
     {
-        $response = $this->client->get($this->apiRoot . '/random',
-            [
-                'auth' => [$this->apiKey, $this->apiKey],
-            ]
-        );
+        $this->usedFallback = false;
 
-        return \GuzzleHttp\json_decode($response->getBody());
+        try
+        {
+            $response = $this->client->get($this->apiRoot . '/random');
+            $decoded = json_decode($response->getBody()->getContents());
+
+            if ($decoded !== null)
+            {
+                // Normalize: v3 returns an object, v2 returns an array
+                return $this->normalizeImageUrls(is_array($decoded) ? $decoded : [$decoded]);
+            }
+        } catch (GuzzleException)
+        {
+            // Fall through to local data
+        }
+
+        $this->usedFallback = true;
+        $beers = $this->loadLocalData();
+
+        return $this->normalizeImageUrls([$beers[array_rand($beers)]]);
     }
 
     /**
-     * Get a beer from the API by it's ID number
+     * Get a beer by its ID number.
+     * Falls back to bundled data if the API is unreachable.
      *
-     * @return \StdClass beer object
+     * @param int $beerId
+     * @return array containing a single beer \StdClass object
      */
-    public function getBeerById($beerId)
+    public function getBeerById(int $beerId): array
     {
-        if ($this->apiKey === 'v2')
+        $this->usedFallback = false;
+
+        try
         {
             $response = $this->client->get($this->apiRoot . '/' . $beerId);
+            $decoded = json_decode($response->getBody()->getContents());
 
-            return \GuzzleHttp\json_decode($response->getBody());
+            if ($decoded !== null)
+            {
+                // Normalize: v3 returns an object, v2 returns an array
+                return $this->normalizeImageUrls(is_array($decoded) ? $decoded : [$decoded]);
+            }
+        } catch (GuzzleException)
+        {
+            // Fall through to local data
         }
-        $response = $this->client->get($this->apiRoot . '/' . $beerId,
-            [
-                'auth' => [$this->apiKey, $this->apiKey],
-            ]
-        );
 
-        return \GuzzleHttp\json_decode($response->getBody());
+        $this->usedFallback = true;
+        $beers = $this->loadLocalData();
 
+        foreach ($beers as $beer)
+        {
+            if ($beer->id === $beerId)
+            {
+                return $this->normalizeImageUrls([$beer]);
+            }
+        }
+
+        return [];
     }
 
     /**
      * Set the parameters to return the given page of results
      *
-     * @param $pageNumber
+     * @param int $pageNumber
      * @return $this
      */
-    public function page($pageNumber)
+    public function page(int $pageNumber): self
     {
         $this->addParams(['page' => $pageNumber]);
 
@@ -209,10 +272,10 @@ class PunkApi
     /**
      * Set the number of beers to return per page
      *
-     * @param $number
+     * @param int $number
      * @return $this
      */
-    public function perPage($number)
+    public function perPage(int $number): self
     {
         $this->addParams(['per_page' => $number]);
 
@@ -222,10 +285,10 @@ class PunkApi
     /**
      * Sets the abv_gt parameter to the given number.
      *
-     * @param $number
+     * @param float|int $number
      * @return $this
      */
-    public function abvAbove($number)
+    public function abvAbove(float|int $number): self
     {
         $this->addParams(['abv_gt' => $number]);
 
@@ -235,10 +298,10 @@ class PunkApi
     /**
      * Sets the abv_lt parameter to the given number.
      *
-     * @param $number
+     * @param float|int $number
      * @return $this
      */
-    public function abvBelow($number)
+    public function abvBelow(float|int $number): self
     {
         $this->addParams(['abv_lt' => $number]);
 
@@ -248,10 +311,10 @@ class PunkApi
     /**
      * Sets the ibu_gt parameter to the given number.
      *
-     * @param $number
+     * @param float|int $number
      * @return $this
      */
-    public function ibuAbove($number)
+    public function ibuAbove(float|int $number): self
     {
         $this->addParams(['ibu_gt' => $number]);
 
@@ -261,10 +324,10 @@ class PunkApi
     /**
      * Sets the ibu_lt parameter to the given number.
      *
-     * @param $number
+     * @param float|int $number
      * @return $this
      */
-    public function ibuBelow($number)
+    public function ibuBelow(float|int $number): self
     {
         $this->addParams(['ibu_lt' => $number]);
 
@@ -274,10 +337,10 @@ class PunkApi
     /**
      * Sets the ebc_gt parameter to the given number.
      *
-     * @param $number
+     * @param float|int $number
      * @return $this
      */
-    public function ebcAbove($number)
+    public function ebcAbove(float|int $number): self
     {
         $this->addParams(['ebc_gt' => $number]);
 
@@ -287,10 +350,10 @@ class PunkApi
     /**
      * Sets the ebc_lt parameter to the given number.
      *
-     * @param $number
+     * @param float|int $number
      * @return $this
      */
-    public function ebcBelow($number)
+    public function ebcBelow(float|int $number): self
     {
         $this->addParams(['ebc_lt' => $number]);
 
@@ -300,10 +363,10 @@ class PunkApi
     /**
      * Sets the beer_name parameter to the given beer name.
      *
-     * @param $beerName
+     * @param string $beerName
      * @return $this
      */
-    public function named($beerName)
+    public function named(string $beerName): self
     {
         $this->addParams(['beer_name' => $beerName]);
 
@@ -313,10 +376,10 @@ class PunkApi
     /**
      * Sets the yeast parameter to the given yeast name
      *
-     * @param $yeastName
+     * @param string $yeastName
      * @return $this
      */
-    public function yeast($yeastName)
+    public function yeast(string $yeastName): self
     {
         $this->addParams(['yeast' => $yeastName]);
 
@@ -326,10 +389,10 @@ class PunkApi
     /**
      * Sets the hops parameter to the given hops name
      *
-     * @param $hopsName
+     * @param string $hopsName
      * @return $this
      */
-    public function hops($hopsName)
+    public function hops(string $hopsName): self
     {
         $this->addParams(['hops' => $hopsName]);
 
@@ -339,10 +402,10 @@ class PunkApi
     /**
      * Sets the malt parameter to the given malt name
      *
-     * @param $maltName
+     * @param string $maltName
      * @return $this
      */
-    public function malt($maltName)
+    public function malt(string $maltName): self
     {
         $this->addParams(['malt' => $maltName]);
 
@@ -352,10 +415,10 @@ class PunkApi
     /**
      * Sets the brewed_before parameter to the given date
      *
-     * @param $date
+     * @param string $date format: mm-yyyy or yyyy
      * @return $this
      */
-    public function brewedBefore($date)
+    public function brewedBefore(string $date): self
     {
         $this->addParams(['brewed_before' => $date]);
 
@@ -365,10 +428,10 @@ class PunkApi
     /**
      * Sets the brewed_after parameter to the given date
      *
-     * @param $date
+     * @param string $date format: mm-yyyy or yyyy
      * @return $this
      */
-    public function brewedAfter($date)
+    public function brewedAfter(string $date): self
     {
         $this->addParams(['brewed_after' => $date]);
 
@@ -378,10 +441,10 @@ class PunkApi
     /**
      * Sets the food parameter to the given food name
      *
-     * @param $foodName
+     * @param string $foodName
      * @return $this
      */
-    public function food($foodName)
+    public function food(string $foodName): self
     {
         $this->addParams(['food' => $foodName]);
 
@@ -389,16 +452,18 @@ class PunkApi
     }
 
     /**
-     * Sets the ids parameter to the given ids
+     * Sets the ids parameter to the given ids.
+     * Accepts an array of ID numbers or a pre-formatted string.
      *
-     * @param mixed $ids (array of ID numbers or piped string)
+     * @param array|string $ids
      * @return $this
      */
-    public function ids($ids)
+    public function ids(array|string $ids): self
     {
         if (is_array($ids))
         {
-            $ids = join("|", $ids);
+            $separator = $this->apiVersion === 'v3' ? ',' : '|';
+            $ids = join($separator, $ids);
         }
 
         $this->addParams(['ids' => $ids]);
@@ -407,14 +472,50 @@ class PunkApi
     }
 
     /**
-     * Helper method, parameter validation-ish.
+     * Normalizes image fields on an array of beer objects.
      *
-     * @param $params
+     * Sets `image_url` to the full v3 API image URL and `image_url_fallback`
+     * to the GitHub raw URL. Handles bare filenames (v3/fallback data),
+     * full v2 URLs (https://images.punkapi.com/v2/...), and already-normalized URLs.
+     *
+     * @param array $beers
      * @return array
      */
-    private function cleanParams($params)
+    private function normalizeImageUrls(array $beers): array
     {
+        foreach ($beers as $beer)
+        {
+            // Determine the bare filename from whichever field is present
+            $raw = $beer->image ?? $beer->image_url ?? null;
 
+            if ($raw === null)
+            {
+                $beer->image = null;
+                $beer->image_url = null;
+                $beer->image_url_fallback = null;
+                continue;
+            }
+
+            // Extract just the filename if it's a full URL
+            $filename = basename($raw);
+
+            // Set all three so consumers can use ->image or ->image_url interchangeably
+            $beer->image = $filename;
+            $beer->image_url = self::IMAGE_BASE_URL . $filename;
+            $beer->image_url_fallback = self::IMAGE_FALLBACK_BASE_URL . $filename;
+        }
+
+        return $beers;
+    }
+
+    /**
+     * Helper method, parameter validation.
+     *
+     * @param array $params
+     * @return array
+     */
+    private function cleanParams(array $params): array
+    {
         return array_filter(
             $params,
             function ($key)
@@ -425,9 +526,206 @@ class PunkApi
         );
     }
 
-    private function deprecated()
+    /**
+     * Loads the bundled beer data from the JSON file.
+     * Caches the result in a static property to avoid re-reading on every call.
+     *
+     * @return array of beer \StdClass objects
+     */
+    private function loadLocalData(): array
     {
-        trigger_error("V1 of the API is deprecated and should not be used.", E_USER_DEPRECATED);
+        if (self::$localData !== null)
+        {
+            return self::$localData;
+        }
+
+        $dataFile = __DIR__ . '/../data/beers.json';
+
+        if (!file_exists($dataFile))
+        {
+            return [];
+        }
+
+        $decoded = json_decode(file_get_contents($dataFile));
+        self::$localData = is_array($decoded) ? $decoded : [];
+
+        return self::$localData;
     }
 
+    /**
+     * Applies the current parameters to filter the local beer data,
+     * replicating the API's filtering and pagination behavior.
+     *
+     * @param array $beers
+     * @return array
+     */
+    private function filterLocalData(array $beers): array
+    {
+        $params = $this->params;
+
+        $beers = array_filter($beers, function ($beer) use ($params)
+        {
+            // Numeric filters: abv, ibu, ebc
+            foreach (['abv', 'ibu', 'ebc'] as $field)
+            {
+                if (isset($params[$field . '_gt']))
+                {
+                    if ($beer->$field === null || $beer->$field <= $params[$field . '_gt'])
+                    {
+                        return false;
+                    }
+                }
+                if (isset($params[$field . '_lt']))
+                {
+                    if ($beer->$field === null || $beer->$field >= $params[$field . '_lt'])
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            // Name filter (case-insensitive partial match)
+            if (isset($params['beer_name']))
+            {
+                if (stripos($beer->name, $params['beer_name']) === false)
+                {
+                    return false;
+                }
+            }
+
+            // Yeast filter (case-insensitive partial match)
+            if (isset($params['yeast']))
+            {
+                $yeast = $beer->ingredients->yeast ?? null;
+                if ($yeast === null || stripos($yeast, $params['yeast']) === false)
+                {
+                    return false;
+                }
+            }
+
+            // Hops filter (case-insensitive partial match on any hop name)
+            if (isset($params['hops']))
+            {
+                $hops = $beer->ingredients->hops ?? [];
+                $found = false;
+                foreach ($hops as $hop)
+                {
+                    if (stripos($hop->name, $params['hops']) !== false)
+                    {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found)
+                {
+                    return false;
+                }
+            }
+
+            // Malt filter (case-insensitive partial match on any malt name)
+            if (isset($params['malt']))
+            {
+                $malts = $beer->ingredients->malt ?? [];
+                $found = false;
+                foreach ($malts as $malt)
+                {
+                    if (stripos($malt->name, $params['malt']) !== false)
+                    {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found)
+                {
+                    return false;
+                }
+            }
+
+            // Food pairing filter (case-insensitive partial match on any pairing)
+            if (isset($params['food']))
+            {
+                $pairings = $beer->food_pairing ?? [];
+                $found = false;
+                foreach ($pairings as $pairing)
+                {
+                    if (stripos($pairing, $params['food']) !== false)
+                    {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found)
+                {
+                    return false;
+                }
+            }
+
+            // IDs filter
+            if (isset($params['ids']))
+            {
+                // Support both comma and pipe separators
+                $ids = array_map('intval', preg_split('/[,|]/', $params['ids']));
+                if (!in_array($beer->id, $ids))
+                {
+                    return false;
+                }
+            }
+
+            // Date filters
+            if (isset($params['brewed_before']))
+            {
+                $brewDate = $this->parseBrewDate($beer->first_brewed ?? '');
+                $filterDate = $this->parseBrewDate($params['brewed_before']);
+                if ($brewDate === null || $filterDate === null || $brewDate >= $filterDate)
+                {
+                    return false;
+                }
+            }
+
+            if (isset($params['brewed_after']))
+            {
+                $brewDate = $this->parseBrewDate($beer->first_brewed ?? '');
+                $filterDate = $this->parseBrewDate($params['brewed_after']);
+                if ($brewDate === null || $filterDate === null || $brewDate <= $filterDate)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        // Re-index after filtering
+        $beers = array_values($beers);
+
+        // Pagination
+        $perPage = (int) ($params['per_page'] ?? 25);
+        $page = max(1, (int) ($params['page'] ?? 1));
+        $perPage = max(1, $perPage);
+        $offset = ($page - 1) * $perPage;
+
+        return array_slice($beers, $offset, $perPage);
+    }
+
+    /**
+     * Parses a brew date string into a comparable integer (YYYYMM format).
+     * Supports formats: "MM/YYYY", "MM-YYYY", "YYYY"
+     *
+     * @param string $date
+     * @return int|null
+     */
+    private function parseBrewDate(string $date): ?int
+    {
+        if (preg_match('/^(\d{1,2})[\/\-](\d{4})$/', $date, $matches))
+        {
+            return (int) $matches[2] * 100 + (int) $matches[1];
+        }
+
+        if (preg_match('/^(\d{4})$/', $date, $matches))
+        {
+            return (int) $matches[1] * 100 + 1;
+        }
+
+        return null;
+    }
 }
